@@ -1,6 +1,9 @@
 #libraries
 import pandas as pd
 import numpy as np
+
+pip install yfinance
+
 import yfinance as yf
 import time
 import streamlit as st

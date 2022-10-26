@@ -18,3 +18,34 @@ for i in range(0,len(list_of_all_tickers)):
   sample=['ACC.NS','ADANIENT.NS','ADANIGREEN.NS','ADANIPORTS.NS','ATGL.NS','ADANITRANS.NS','AMBUJACEM.NS','APOLLOHOSP.NS','ASIANPAINT.NS','DMART.NS','AXISBANK.NS','BAJAJ-AUTO.NS','BAJFINANCE.NS','BAJAJFINSV.NS','BAJAJHLDNG.NS','BANDHANBNK.NS','BANKBARODA.NS','BERGEPAINT.NS','BEL.NS','BPCL.NS','BHARTIARTL.NS','BIOCON.NS','BOSCHLTD.NS','BRITANNIA.NS','CHOLAFIN.NS','CIPLA.NS','COALINDIA.NS','COLPAL.NS','DLF.NS','DABUR.NS','DIVISLAB.NS','DRREDDY.NS','EICHERMOT.NS','NYKAA.NS','GAIL.NS','GLAND.NS','GODREJCP.NS','GRASIM.NS','HCLTECH.NS','HDFCAMC.NS','HDFCBANK.NS','HDFCLIFE.NS','HAVELLS.NS','HEROMOTOCO.NS','HINDALCO.NS','HAL.NS','HINDUNILVR.NS','HDFC.NS','ICICIBANK.NS','ICICIGI.NS','ICICIPRULI.NS','ITC.NS','IOC.NS','IRCTC.NS','INDUSTOWER.NS','INDUSINDBK.NS','NAUKRI.NS','INFY.NS','INDIGO.NS','JSWSTEEL.NS','KOTAKBANK.NS','LTI.NS','LT.NS','LICI.NS','M&M.NS','MARICO.NS','MARUTI.NS','MPHASIS.NS','MUTHOOTFIN.NS','NTPC.NS','NESTLEIND.NS','ONGC.NS','PAYTM.NS','PIIND.NS','PIDILITIND.NS','POWERGRID.NS','PGHH.NS','RELIANCE.NS','SBICARD.NS','SBILIFE.NS','SRF.NS','MOTHERSON.NS','SHREECEM.NS','SIEMENS.NS','SBIN.NS','SUNPHARMA.NS','TCS.NS','TATACONSUM.NS','TATAMOTORS.NS','TATAPOWER.NS','TATASTEEL.NS','TECHM.NS','TITAN.NS','TORNTPHARM.NS','UPL.NS','ULTRACEMCO.NS','MCDOWELL-N.NS','VEDL.NS','WIPRO.NS','ZOMATO.NS']
   
   
+def upper_bollinger():
+    name=[]
+    UpperBollinger=[]
+    for j in range(0,len(sample)):
+        print("STOCK SYMBOL:",sample[j])
+
+        intraday_data=yf.download(tickers=sample[j],period='5d',interval="5m")
+        intraday_data.reset_index(inplace=True)
+        #daily_data=yf.download(tickers=loaf[j],period='20d')
+        intraday_data['Typical Price']=intraday_data['Close']
+        intraday_data['std'] = intraday_data['Typical Price'].rolling(20).std(ddof=0)
+        intraday_data['MA-TP'] = intraday_data['Typical Price'].rolling(20).mean()
+        intraday_data['BOLU'] = intraday_data['MA-TP'] + 2*intraday_data['std']
+        intraday_data['BOLD'] = intraday_data['MA-TP'] - 2*intraday_data['std']
+
+        try:
+            for k in range(0,len(intraday_data)):
+                if intraday_data['Close'][k]>intraday_data['BOLU'][k]:
+                    #print("Upper Bollinger Band Broken at: ",intraday_data['Datetime'][k])
+                    name.append(sample[j])
+                    UpperBollinger.append(intraday_data['Datetime'][k])        
+        except:
+            print("Try again later")
+    
+    Upper_df=pd.DataFrame()
+    Upper_df['Name']=name
+    Upper_df['Time of Upper Bollinger Breaking']=UpperBollinger
+    return Upper_df
+  
+  data=upper_bollinger()
+  st.write(data)

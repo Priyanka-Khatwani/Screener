@@ -46,6 +46,3 @@ def upper_bollinger():
     Upper_df['Name']=name
     Upper_df['Time of Upper Bollinger Breaking']=UpperBollinger
     return Upper_df
-  
-  st.write(sample)
-  

@@ -108,9 +108,7 @@ def engulfing_5minutes():
     engulfing_df['Engulfing Type']=engulfing_type
     
     return engulfing_df
-  
-  
- def engulfing_1hour():
+def engulfing_1hour():
     datetime=[]
     engulfing_type=[]
     name=[]

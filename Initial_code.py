@@ -140,7 +140,7 @@ def engulfing_1hour():
     
     return engulfing_df
 choices=st.radio(label="Select suitable option",options=("Upper Bollinger breaking for Nifty100","Lower Bollinger breaking for Nifty100","Engulfing 1 hour","Engulfing 5 mins")
-if choices=="Upper Bollinger breaking for Nifty100":
+if choices=='Upper Bollinger breaking for Nifty100':
                  st.table(upper_bollinger())
 if choices=="Lower Bollinger breaking for Nifty100":
                  st.table(lower_bollinger())

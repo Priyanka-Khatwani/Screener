@@ -147,7 +147,7 @@ if choices=="Lower Bollinger breaking for Nifty100":
 if choices=="Engulfing 1 hour for Nifty100":
                  st.dataframe(engulfing_1hour(),use_container_width=True)
 if choices=="Engulfing 5 mins for Nifty100":
-                 st.dataframe(engulfing_5mins(),use_container_width=True)
+                 st.dataframe(engulfing_5minutes(),use_container_width=True)
                  
                  
                  

@@ -47,6 +47,110 @@ def upper_bollinger():
     Upper_df['Time of Upper Bollinger Breaking']=UpperBollinger
     return Upper_df
   
-def upper_bollinger_call():
-  data=upper_bollinger()
-st.button(label='Get Upper Bollinger Break points for Nifty100 stocks',on_click=st.dataframe(upper_bollinger()))
+def lower_bollinger():
+    name=[]
+    LowerBollinger=[]
+
+    for j in range(0,len(sample)):
+        print("STOCK SYMBOL:",sample[j])
+
+        intraday_data=yf.download(tickers=sample[j],period='5d',interval="5m")
+        intraday_data.reset_index(inplace=True)
+        daily_data=yf.download(tickers=loaf[j],period='20d')
+        intraday_data['Typical Price']=intraday_data['Close']
+        intraday_data['std'] = intraday_data['Typical Price'].rolling(20).std(ddof=0)
+        intraday_data['MA-TP'] = intraday_data['Typical Price'].rolling(20).mean()
+        intraday_data['BOLU'] = intraday_data['MA-TP'] + 2*intraday_data['std']
+        intraday_data['BOLD'] = intraday_data['MA-TP'] - 2*intraday_data['std']
+
+        try:
+            for k in range(0,len(intraday_data)):
+                if intraday_data['Close'][k]<intraday_data['BOLD'][k]:
+                    #print("Lower Bollinger Band Broken at: ",intraday_data['Datetime'][k])
+                    name.append(sample[j])
+                    LowerBollinger.append(intraday_data['Datetime'][k])
+        except:
+            print("Try again later")
+            
+    Lower_df=pd.DataFrame()
+    Lower_df['Name']=name
+    Lower_df['Time of Lower Bollinger Breaking']=LowerBollinger
+    return Lower_df
+  
+def engulfing_5minutes():
+    datetime=[]
+    engulfing_type=[]
+    name=[]
+    for j in range(0,len(sample)):
+        print("For stock with ticker ",sample[j])
+        intraday_data=yf.download(tickers=sample[j],period='22d',interval='5m')
+        intraday_data.reset_index(inplace=True)
+        intraday_data['Spread']=intraday_data['Close']-intraday_data['Open']
+        try:
+            for k in range(0,len(intraday_data)):
+                if intraday_data['Spread'][k]>0 and intraday_data['Spread'][k+1]<0: #green before red for bearish engulfing
+                    if intraday_data['Close'][k]<intraday_data['Open'][k+1] and intraday_data['Open'][k]>=intraday_data['Close'][k+1]:
+                        print('Bearish Engulfing at :',intraday_data['Datetime'][k+1])
+                        engulfing_type.append("Bearish")
+                        datetime.append(intraday_data['Datetime'][k+1])
+                        name.append(sample[j])
+                if intraday_data['Spread'][k]<0 and intraday_data['Spread'][k+1]>0: # red before green for bullish engulfing
+                    if intraday_data['Close'][k]>=intraday_data['Open'][k+1] and intraday_data['Open'][k]<intraday_data['Close'][k+1]:
+                        print('Bullish engulfing at : ',intraday_data['Datetime'][k+1])
+                        engulfing_type.append("Bullish")
+                        datetime.append(intraday_data['Datetime'][k+1])
+                        name.append(sample[j])
+        except:
+            print("Max reached")
+    engulfing_df=pd.DataFrame()
+    engulfing_df['Name']=name
+    engulfing_df['DateTime']=datetime
+    engulfing_df['Engulfing Type']=engulfing_type
+    
+    return engulfing_df
+  
+  
+ def engulfing_1hour():
+    datetime=[]
+    engulfing_type=[]
+    name=[]
+    for j in range(0,len(sample)):
+        print("For stock with ticker ",sample[j])
+        intraday_data=yf.download(tickers=sample[j],period='22d',interval='60m')
+        intraday_data.reset_index(inplace=True)
+        intraday_data['Spread']=intraday_data['Close']-intraday_data['Open']
+        try:
+            for k in range(0,len(intraday_data)):
+                if intraday_data['Spread'][k]>0 and intraday_data['Spread'][k+1]<0: #green before red for bearish engulfing
+                    if intraday_data['Close'][k]<intraday_data['Open'][k+1] and intraday_data['Open'][k]>=intraday_data['Close'][k+1]:
+                        print('Bearish Engulfing at :',intraday_data['Datetime'][k+1])
+                        engulfing_type.append("Bearish")
+                        datetime.append(intraday_data['Datetime'][k+1])
+                        name.append(sample[j])
+                if intraday_data['Spread'][k]<0 and intraday_data['Spread'][k+1]>0: # red before green for bullish engulfing
+                    if intraday_data['Close'][k]>=intraday_data['Open'][k+1] and intraday_data['Open'][k]<intraday_data['Close'][k+1]:
+                        print('Bullish engulfing at : ',intraday_data['Datetime'][k+1])
+                        engulfing_type.append("Bullish")
+                        datetime.append(intraday_data['Datetime'][k+1])
+                        name.append(sample[j])
+        except:
+            print("Max reached")
+    engulfing_df=pd.DataFrame()
+    engulfing_df['Name']=name
+    engulfing_df['DateTime']=datetime
+    engulfing_df['Engulfing Type']=engulfing_type
+    
+    return engulfing_df
+choices=st.radio(label="Select suitable option",options=("Upper Bollinger breaking for Nifty100","Lower Bollinger breaking for Nifty100","Engulfing 1 hour","Engulfing 5 mins")
+if choices=="Upper Bollinger breaking for Nifty100":
+                 st.table(upper_bollinger())
+if choices=="Lower Bollinger breaking for Nifty100":
+                 st.table(lower_bollinger())
+if choices=="Engulfing 1 hour":
+                 st.table(engulfing_1hour())
+if choices=="Engulfing 5 mins":
+                 st.table(engulfing_5mins())
+                 
+                 
+                 
+                 

@@ -46,4 +46,7 @@ def upper_bollinger():
     Upper_df['Name']=name
     Upper_df['Time of Upper Bollinger Breaking']=UpperBollinger
     return Upper_df
-st.button(label='Get Upper Bollinger Break points for Nifty100 stocks',on_click=upper_bollinger())
+  
+def upper_bollinger_call():
+  data=upper_bollinger()
+st.button(label='Get Upper Bollinger Break points for Nifty100 stocks',on_click=st.dataframe(upper_bollinger()))
